@@ -51,6 +51,8 @@ CIFAR-10 dataset consists of 60,000 32x32 color images in 10 classes, with 6,00
 Generate your model configuration file interactively by running `blueoil init` command.
 
     $ ./blueoil.sh init
+    
+> Please don't forget to build docker initial image. Follow instruction for docker from [pre-requisites](https://docs.blue-oil.org/install/install.html).
 
 This is an example of configuration.
 
