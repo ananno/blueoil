@@ -84,7 +84,7 @@ GUEST_OUTPUT_DIR="${GUEST_HOME_DIR}/saved"
 USER_ID=$(id -u)
 GROUP_ID=$(id -g)
 # Shared docker options
-PYHONPATHS="-e PYTHONPATH=/home/blueoil:/home/blueoil/lmnet:/home/blueoil/dlk/python/dlk"
+PYHONPATHS="-e PYTHONPATH=/home/blueoil:/home/blueoil/lmnet:/home/blueoil/dlk/python/dlk -e LD_LIBRARY_PATH=/usr/local/cuda/lib64/stabs:${LD_LIBRARY_PATH}"
 SHARED_DOCKER_OPTIONS="--rm -t -u ${USER_ID}:${GROUP_ID} ${PYHONPATHS}"
 
 function blueoil_init(){

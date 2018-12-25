@@ -15,13 +15,14 @@
 # =============================================================================
 import os
 import math
-
+import time
 import click
 import tensorflow as tf
 from tensorflow.core.util.event_pb2 import SessionLog
 
 from lmnet.utils import executor, module_loader, config as config_util
 from lmnet import environment
+from lmnet.datasets.tf_dataset_iterator import TFIterator
 
 
 def _save_checkpoint(saver, sess, global_step, step):
@@ -70,7 +71,7 @@ def start_training(config):
 
     train_dataset = DatasetClass(
         subset="train",
-        **dataset_kwargs,
+        **dataset_kwargs
     )
 
     print("train dataset num:", train_dataset.num_per_epoch)
@@ -113,10 +114,21 @@ def start_training(config):
                 **network_kwargs,
             )
 
+        train_dataset = TFIterator(
+            dataset=train_dataset,
+            config=config
+        ).get_iterator()
+
+        validation_dataset = TFIterator(
+            dataset=validation_dataset,
+            config=config
+        ).get_iterator()
+
         global_step = tf.Variable(0, name="global_step", trainable=False)
         is_training_placeholder = tf.placeholder(tf.bool, name="is_training_placeholder")
 
-        images_placeholder, labels_placeholder = model.placeholderes()
+        # images_placeholder, labels_placeholder = model.placeholderes()
+        images_placeholder, labels_placeholder = train_dataset.feed()
 
         output = model.inference(images_placeholder, is_training_placeholder)
         if ModelClass.__module__.startswith("lmnet.networks.object_detection"):
@@ -179,6 +191,8 @@ def start_training(config):
 
     sess = tf.Session(graph=graph, config=session_config)
     sess.run([init_op, reset_metrics_op])
+    sess.run([train_dataset.iterator.initializer,
+              validation_dataset.iterator.initializer])
 
     if rank == 0:
         train_writer = tf.summary.FileWriter(environment.TENSORBOARD_DIR + "/train", sess.graph)
@@ -225,6 +239,7 @@ def start_training(config):
         max_steps = config.MAX_STEPS
     print("max_steps: {}".format(max_steps))
 
+    st_time = time.time()
     for step in range(last_step, max_steps):
         print("step", step)
 
@@ -238,12 +253,12 @@ def start_training(config):
                 # update each dataset by splited indices
                 train_dataset.update_dataset(feed_indices)
 
-        images, labels = train_dataset.feed()
+        # images, labels = train_dataset.feed()
 
         feed_dict = {
             is_training_placeholder: True,
-            images_placeholder: images,
-            labels_placeholder: labels,
+            # images_placeholder: images,
+            # labels_placeholder: labels,
         }
 
         if step * ((step + 1) % config.SUMMARISE_STEPS) == 0 and rank == 0:
@@ -339,11 +354,11 @@ def start_training(config):
             for test_step in range(test_step_size):
                 print("test_step", test_step)
 
-                images, labels = validation_dataset.feed()
+                # images, labels = validation_dataset.feed()
                 feed_dict = {
                     is_training_placeholder: False,
-                    images_placeholder: images,
-                    labels_placeholder: labels,
+                    # images_placeholder: images,
+                    # labels_placeholder: labels,
                 }
 
                 if test_step % config.SUMMARISE_STEPS == 0:
@@ -364,7 +379,7 @@ def start_training(config):
                 val_writer.add_summary(metrics_summary, step + 1)
 
     # training loop end.
-    print("reach max step")
+    print("reach max step ... in %s ", time.strftime("%H:%M:%S", time.gmtime(time.time() - st_time)))
 
 
 def run(network, dataset, config_file, experiment_id, recreate):

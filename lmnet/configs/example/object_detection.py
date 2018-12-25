@@ -17,7 +17,8 @@ from easydict import EasyDict
 import tensorflow as tf
 
 from lmnet.common import Tasks
-from lmnet.networks.object_detection.yolo_v2_quantize import YoloV2Quantize
+#from lmnet.networks.object_detection.yolo_v2_quantize import YoloV2Quantize
+from lmnet.networks.object_detection.lm_fyolo import LMFYolo
 from lmnet.datasets.lm_things_on_a_table import LmThingsOnATable
 from lmnet.data_processor import Sequence
 from lmnet.pre_processor import (
@@ -44,10 +45,10 @@ from lmnet.quantizations import (
 
 IS_DEBUG = False
 
-NETWORK_CLASS = YoloV2Quantize
+NETWORK_CLASS = LMFYolo  # YoloV2Quantize
 DATASET_CLASS = LmThingsOnATable
 
-IMAGE_SIZE = [128, 128]
+IMAGE_SIZE = [160, 320]
 BATCH_SIZE = 8
 DATA_FORMAT = "NCHW"
 TASK = Tasks.OBJECT_DETECTION
@@ -71,6 +72,7 @@ PRE_PROCESSOR = Sequence([
     ResizeWithGtBoxes(size=IMAGE_SIZE),
     DivideBy255()
 ])
+
 anchors = [
     (1.3221, 1.73145), (3.19275, 4.00944), (5.05587, 8.09892), (9.47112, 4.84053), (11.2364, 10.0071)
 ]
@@ -128,11 +130,12 @@ DATASET = EasyDict()
 DATASET.BATCH_SIZE = BATCH_SIZE
 DATASET.DATA_FORMAT = DATA_FORMAT
 DATASET.PRE_PROCESSOR = PRE_PROCESSOR
-DATASET.AUGMENTOR = Sequence([
-    FlipLeftRight(is_bounding_box=True),
-    Brightness((0.75, 1.25)),
-    Color((0.75, 1.25)),
-    Contrast((0.75, 1.25)),
-    Hue((-10, 10)),
-    SSDRandomCrop(min_crop_ratio=0.7),
-])
+# DATASET.AUGMENTOR = Sequence([
+#     FlipLeftRight(is_bounding_box=True),
+#     Brightness((0.75, 1.25)),
+#     Color((0.75, 1.25)),
+#     Contrast((0.75, 1.25)),
+#     Hue((-10, 10)),
+#     SSDRandomCrop(min_crop_ratio=0.7),
+# ])
+DATASET.IMAGE_SHAPE = [160, 320, 3]

@@ -27,6 +27,7 @@ OUTPUT_DIR = os.getenv("OUTPUT_DIR", default_output_dir)
 _EXPERIMENT_DIR = os.path.join(OUTPUT_DIR, "{experiment_id}")
 _TENSORBOARD_DIR = os.path.join(OUTPUT_DIR, "{experiment_id}", "tensorboard")
 _CHECKPOINTS_DIR = os.path.join(OUTPUT_DIR, "{experiment_id}", "checkpoints")
+_TFR_DIR = os.path.join(TMP_DIR, "tfrecords", "{experiment_id}")
 
 _init_flag = False
 
@@ -36,7 +37,7 @@ def init(experiment_id):
 
     experiment id embed to directories.
     """
-    global _init_flag, EXPERIMENT_DIR, TENSORBOARD_DIR, CHECKPOINTS_DIR
+    global _init_flag, EXPERIMENT_ID, EXPERIMENT_DIR, TENSORBOARD_DIR, CHECKPOINTS_DIR, TFR_DIR
 
     if _init_flag:
         raise Exception("Experiment setting already initialized.")
@@ -47,6 +48,8 @@ def init(experiment_id):
             experiment_id = experiment_id.replace(OUTPUT_DIR + os.path.sep, "")
             print(experiment_id)
 
+        EXPERIMENT_ID = experiment_id
+
         EXPERIMENT_DIR = _EXPERIMENT_DIR.format(experiment_id=experiment_id)
 
         # directory to save this experiment outputs for tensorboard.
@@ -54,6 +57,9 @@ def init(experiment_id):
 
         # checkpoints_dir in the same way of tensorboard_dir.
         CHECKPOINTS_DIR = _CHECKPOINTS_DIR.format(experiment_id=experiment_id)
+
+        # tfrecord_dir in the temp dir with experiment id
+        TFR_DIR = _TFR_DIR.format(experiment_id=experiment_id)
 
         _init_flag = True
 

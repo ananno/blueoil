@@ -28,11 +28,13 @@ class Base(metaclass=ABCMeta):
     def __init__(
             self,
             subset="train",
+            base_path=None,
             batch_size=10,
             augmentor=None,
             pre_processor=None,
             data_format='NHWC',
-            seed=None
+            seed=None,
+            image_shape=None,
     ):
         assert subset in self.available_subsets, self.available_subsets
         self.subset = subset
@@ -42,6 +44,12 @@ class Base(metaclass=ABCMeta):
         self.data_format = data_format
         self.seed = seed or 0
         self.current_element_index = 0
+        self.image_shape = image_shape
+
+        if base_path is None:
+            self.base_path = environment.DATA_DIR
+        else:
+            self.base_path = base_path
 
     @property
     def data_dir(self):

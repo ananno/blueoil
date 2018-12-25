@@ -25,6 +25,7 @@ services:
       - DATA_DIR=/storage/dataset
       - OUTPUT_DIR=/storage/lmnet/saved
       - PYTHONPATH=$PYTHONPATH:/home/lmnet
+      - CUDA_VISIBLE_DEVICES=0
       # for x11
       - DISPLAY=$DISPLAY
 

@@ -310,3 +310,4 @@ class LetterBoxes(Processor):
         image = image / 255.0
         image, gt_boxes = square(image, gt_boxes, fill=0.5)
         return dict({'image': image, 'gt_boxes': gt_boxes}, **kwargs)
+

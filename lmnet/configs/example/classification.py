@@ -24,30 +24,31 @@ from lmnet.pre_processor import (
     Resize,
     PerImageStandardization,
 )
-from lmnet.data_augmentor import (
-    Brightness,
-    Color,
-    Contrast,
-    FlipLeftRight,
-    Hue,
-)
+# from lmnet.data_augmentor import (
+#     Brightness,
+#     Color,
+#     Contrast,
+#     FlipLeftRight,
+#     Hue,
+# )
 from lmnet.quantizations import (
     binary_mean_scaling_quantizer,
     linear_mid_tread_half_quantizer,
 )
+
 
 IS_DEBUG = True
 
 NETWORK_CLASS = LmnetV0Quantize
 DATASET_CLASS = Cifar10
 
-IMAGE_SIZE = [28, 28]
+IMAGE_SIZE = [32, 32]
 BATCH_SIZE = 32
 DATA_FORMAT = "NHWC"
 TASK = Tasks.CLASSIFICATION
 CLASSES = DATASET_CLASS.classes
 
-MAX_EPOCHS = 1  # MAX_STEPS = 1561
+MAX_EPOCHS = 10  # MAX_STEPS = 1561
 SAVE_STEPS = 100
 TEST_STEPS = 100
 SUMMARISE_STEPS = 10
@@ -75,7 +76,7 @@ PRETRAIN_DIR = "saved/lmnet_0.01_caltech101/checkpoints"
 PRETRAIN_FILE = "save.ckpt-99001"
 
 PRE_PROCESSOR = Sequence([
-    Resize(size=IMAGE_SIZE),
+    # Resize(size=IMAGE_SIZE),
     PerImageStandardization()
 ])
 POST_PROCESSOR = None
@@ -100,10 +101,11 @@ DATASET = EasyDict()
 DATASET.BATCH_SIZE = BATCH_SIZE
 DATASET.DATA_FORMAT = DATA_FORMAT
 DATASET.PRE_PROCESSOR = PRE_PROCESSOR
-DATASET.AUGMENTOR = Sequence([
-    FlipLeftRight(),
-    Brightness((0.75, 1.25)),
-    Color((0.75, 1.25)),
-    Contrast((0.75, 1.25)),
-    Hue((-10, 10)),
-])
+# DATASET.AUGMENTOR = Sequence([
+#     FlipLeftRight(),
+#     Brightness((0.75, 1.25)),
+#     Color((0.75, 1.25)),
+#     Contrast((0.75, 1.25)),
+#     Hue((-10, 10)),
+# ])
+DATASET.IMAGE_SHAPE = [3, 32, 32]
