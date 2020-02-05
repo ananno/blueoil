@@ -47,7 +47,7 @@ DATASET_CLASS = type('DATASET_CLASS', ({{dataset_class}},), {{dataset_class_prop
 
 IMAGE_SIZE = {{image_size}}
 BATCH_SIZE = {{batch_size}}
-CELL_SIZE = 32
+ANCHOR_SCALE = 1.0
 DATA_FORMAT = "NHWC"
 TASK = Tasks.OBJECT_DETECTION
 CLASSES = {{classes}}

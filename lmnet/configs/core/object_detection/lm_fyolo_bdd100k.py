@@ -22,13 +22,12 @@ from lmnet.data_augmentor import (Brightness, Color, Contrast, FlipLeftRight,
 from lmnet.data_processor import Sequence
 from lmnet.datasets.bdd100k import BDD100KObjectDetection
 from lmnet.networks.object_detection.lm_fyolo import LMFYolo
-from lmnet.networks.object_detection.yolo_v2 import YoloV2
 from lmnet.post_processor import NMS, ExcludeLowScoreBox, FormatYoloV2
 from lmnet.pre_processor import DivideBy255, ResizeWithGtBoxes
 
 IS_DEBUG = False
 
-NETWORK_CLASS = YoloV2
+NETWORK_CLASS = LMFYolo
 DATASET_CLASS = BDD100KObjectDetection
 
 IMAGE_SIZE = [320, 320]
@@ -90,7 +89,7 @@ NETWORK.LEARNING_RATE_FUNC = tf.train.piecewise_constant
 # Train data num per epoch is 16551
 step_per_epoch = int(16551 / BATCH_SIZE)
 NETWORK.LEARNING_RATE_KWARGS = {
-    "values": [1e-4, 2e-2, 5e-3, 5e-4],
+    "values": [1e-4, 2e-3, 5e-4, 5e-5],
     "boundaries": [step_per_epoch, step_per_epoch * 80, step_per_epoch * 120],
 }
 NETWORK.IMAGE_SIZE = IMAGE_SIZE

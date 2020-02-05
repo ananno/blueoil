@@ -663,9 +663,9 @@ class YoloV2(BaseNetwork):
 
     def inference(self, images, is_training):
         tf.compat.v1.summary.histogram("images", images)
-        base, feature_images = self.base(images, is_training)
+        base = self.base(images, is_training)
         self.output = tf.identity(base, name="output")
-        return self.output, feature_images
+        return self.output
 
     def _reorg(self, name, inputs, stride, data_format, use_space_to_depth=True, darknet_original=False):
         with tf.name_scope(name):
